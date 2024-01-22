@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../public/style.css">
+  <link rel="stylesheet" href="../public/globals.css">
+</head>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<body>
+  <div class="frame">
+    <header class="header">
+      <div class="title-container">
+        <img class="image" src="../public/img/image-4.png" />
+        <h1 class="text-wrapper">Ejun’s Server Management Page</h1>
+      </div>
+      <div class="switch-wrapper">
+        <div class="switch">
+          <div class="ellipse"></div>
+          <div class="flaoting-hint-wrapper">
+            <div class="flaoting-hint">
+              <div class="floating-hint-text">어드민: 비활성화됨</div>
+            </div>
+          </div>
+
+        </div>
+    </header>
+    <div class="content">
+      <div class="left">
+        <section class="server-status-frame">
+          <h1>서버 상태</h1>
+          <button id="start-button" class="start-button">
+            <div id="start-button-cover" class="start-button-cover"></div>
+            <h2 id="status-text" class="start-button-text statusText onText"></h2>
+            <h2 id="turn-text" class="start-button-text turnText">끄기</h2>
+            <div id="start-button-background" class="start-button-background onBackground"></div>
+          </button>
+        </section>
+
+        <section class="server-info-frame">
+          <h1>서버 정보</h1>
+          <div class="server-info-container">
+            <div class="title">
+              <h3>Java Edition</h3>
+              <button id="copy-button-java" class="copy-button"><img class="copy-icon"
+                  src="../public/img/copy-icon.png" /></button>
+            </div>
+            <div class="flexcontainer">
+              <p class="text">
+                <span class="span">주소: </span>
+                <span class="text-wrapper-6"> ejun.kro.kr<br /></span>
+              </p>
+              <p class="text">
+                <span class="span">포트: </span>
+                <span class="text-wrapper-6"> 25537</span>
+              </p>
+            </div>
+          </div>
+          <div class="server-info-container">
+            <div class="title">
+              <h3>Bedrock Edition</h3>
+              <button id="copy-button-bedrock" class="copy-button"><img class="copy-icon"
+                  src="../public/img/copy-icon.png" /></button>
+            </div>
+            <div class="flexcontainer">
+              <p class="text">
+                <span class="span">주소: </span> <span class="text-wrapper-6"> ejun.kro.kr<br /></span>
+              </p>
+              <p class="text"><span class="span">포트: </span> <span class="text-wrapper-6">19033</span></p>
+            </div>
+          </div>
+          <div class="discord-logo-wrapper">
+            <a href="https://discord.gg/bd8kERArtZ"><img class="discord-logo"
+                src="../public/img/discord_logo.png" /></a>
+          </div>
+
+        </section>
+      </div>
+      <div class="center">
+        <section class="player-info-frame">
+          <div class="title-2">
+            <h1>접속 인원</h1>
+            <h2 id="online-players-number" class="players-number-text">2명</h2>
+          </div>
+          <ul id="player-status-list" class="list">
+            <li class="index">
+              <h3 class="id">ID</h3>
+              <h3 class="name">Name</h3>
+              <h3 class="playtime">Playtime</h3>
+            </li>
+          </ul>
+      </div>
+      </section>
+
+      <div class="right">
+        <section class="whitelist-frame">
+          <h1>화이트리스트 신청</h1>
+          <input class="id-input" type="text" placeholder="아이디" />
+        </section>
+        <section class="hardware-info-frame">
+          <div class="div-3">
+            <h1>맥미니 현황</h1>
+            <div class="div-4">
+              <div class="group-3">
+                <div class="rectangle"></div>
+                <div class="text-wrapper-13">100%</div>
+              </div>
+              <div class="group-4">
+                <div class="rectangle-2"></div>
+                <div class="text-wrapper-13">RAM</div>
+              </div>
+              <div class="group-5">
+                <div class="rectangle-3"></div>
+                <div class="text-wrapper-13">CPU</div>
+              </div>
+            </div>
+          </div>
+          <div class="diagram-frame">
+            <div class="diagram">
+              <div class="overlap-group"><img class="ellipse-2" src="../public/img/ellipse-4.svg" /></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  </div>
+</body>
+<script>
+  const socket = io();
+  let serverState = null; //0: off 1: on 2: loading
+  let playerList = [];
+
+  const startButton = document.getElementById("start-button");
+  const startButtonBackground = document.getElementById("start-button-background");
+  const startButtonStatusText = document.getElementById("status-text");
+  const startButtonTurnText = document.getElementById("turn-text");
+  const playerStatusUl = document.getElementById("player-status-list");
+  const onlinePlayersNumber = document.getElementById("online-players-number");
+
+  socket.emit("getState", (state, _playerList) => {
+    setState(state);
+    playerList = _playerList;
+    createPlayerStatusList(playerStatusUl, playerList);
+  });
+
+  const createPlayerStatusList = (parent, players) => {
+    let onlinePlayerList = [];
+    players.forEach((e) => {
+      if (e["status"] === "online" || e["status"] === "afk") {
+        onlinePlayerList.push(e);
+      }
+    })
+    onlinePlayersNumber.innerText = `${onlinePlayerList.length}명`;
+    let children = document.getElementsByClassName("item");
+    Array.from(children).forEach((e)=> {parent.removeChild(e);});
+    players.forEach((player) => {
+      player["element"] = createPlayerStatusItem(parent, player);
+    });
+    console.log(players);
+  }
+
+  const setState = (state) => {
+    serverState = state;
+    switch (state) {
+      case 0: offState(); return;
+      case 1: onState(); return;
+      case 2: laodingState(); return;
+    }
+  }
+
+  const onState = () => {
+    startButtonBackground.classList.add("onBackground");
+    startButtonBackground.classList.remove("offBackground");
+    startButtonStatusText.classList.add("onText");
+    startButtonStatusText.classList.remove("offText");
+    startButtonStatusText.innerText = "온라인";
+    startButtonTurnText.innerText = "끄기";
+
+    startButton.disabled = false;
+    startButton.style.cursor = "pointer";
+  }
+
+  const offState = () => {
+    startButtonBackground.classList.remove("onBackground");
+    startButtonBackground.classList.add("offBackground");
+    startButtonStatusText.classList.remove("onText");
+    startButtonStatusText.classList.add("offText");
+    startButtonStatusText.innerText = "오프라인";
+    startButtonTurnText.innerText = "켜기";
+
+    startButton.disabled = false;
+    startButton.style.cursor = "pointer";
+  }
+
+  const laodingState = () => {
+    startButtonStatusText.innerText = "로딩중...";
+    startButtonTurnText.innerText = "로딩중...";
+    startButton.style.cursor = "not-allowed";
+    startButton.disabled = true;
+  }
+
+  const createPlayerStatusItem = (parent, player) => {
+
+    let item = document.createElement("li");
+    item.classList = `item ${player.status}`;
+
+    let statusDot = document.createElement("div");
+    statusDot.classList = `circle status-dot ${player.status}`;
+    item.appendChild(statusDot);
+
+    let id = document.createElement("h3");
+    id.className = "id";
+    id.innerText = player.id;
+    item.appendChild(id);
+
+    let name = document.createElement("h3");
+    name.className = "name";
+    name.innerText = player.name;
+    item.appendChild(name);
+
+    let playtime = document.createElement("h3");
+    playtime.className = "playtime";
+    playtime.innerText = player.joinTime;
+    item.appendChild(playtime);
+
+    parent.appendChild(item);
+
+    return item;
+  }
+
+  startButton.addEventListener("click", () => {
+    if (startButtonStatusText.innerText == "온라인") {
+      socket.emit("stop_server", (err) => { //success or fail
+        offState();
+        alert(err);
+      });
+    } else {
+      socket.emit("start_server", (err) => {
+        onState();
+        alert(err);
+      });
+    }
+  });
+
+  socket.on("success", (from) => {
+    laodingState();
+  });
+
+  socket.on("server_stopped", () => {
+    offState();
+  });
+
+  socket.on("server_started", () => {
+    onState();
+  });
+
+  socket.on("fail", (msg, state) => {
+    if (msg) {
+      alert(msg);
+    }
+    setState(state);
+  });
+
+  socket.on("playerList", (_playerList) => {
+    playerList = _playerList;
+    createPlayerStatusList(playerStatusUl, playerList);
+  });
+
+
+</script>
+<script>
+  const copyButtonJava = document.getElementById("copy-button-java");
+  const copyButtonBedrock = document.getElementById("copy-button-bedrock");
+
+  const copy = (text) => {
+    var myTemporaryInputElement = document.createElement("input");
+    myTemporaryInputElement.type = "text";
+    myTemporaryInputElement.value = text;
+
+    document.body.appendChild(myTemporaryInputElement);
+
+    myTemporaryInputElement.select();
+    document.execCommand("Copy");
+
+    document.body.removeChild(myTemporaryInputElement);
+  }
+
+  copyButtonJava.addEventListener("click", () => {
+    copy("ejun.kro.kr:25537");
+  });
+
+  copyButtonBedrock.addEventListener("click", () => {
+    copy("ejun.kro.kr:19033");
+  });
+</script>
+
+</html>

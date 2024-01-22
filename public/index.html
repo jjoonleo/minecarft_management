@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>fuck you</title>
+  <link rel="stylesheet" href="globals.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="frame">
+    <header class="header">
+      <div class="title-container">
+        <img class="image" src="img/image-4.png" />
+        <h1 class="text-wrapper">Ejun’s Server Management Page</h1>
+      </div>
+      <div class="switch-wrapper">
+        <div class="switch">
+          <div class="ellipse"></div>
+          <div class="flaoting-hint-wrapper">
+            <div class="flaoting-hint">
+              <div class="floating-hint-text">어드민: 비활성화됨</div>
+            </div>
+          </div>
+
+        </div>
+    </header>
+    <div class="content">
+      <div class="left">
+        <section class="server-status-frame">
+          <h1>서버 상태</h1>
+          <button id="start-button" class="start-button">
+            <div id="start-button-cover" class="start-button-cover"></div>
+            <h2 id="status-text" class="start-button-text statusText onText">온라인</h2>
+            <h2 id="turn-text" class="start-button-text turnText">끄기</h2>
+            <div id="start-button-background" class="start-button-background onBackground"></div>
+          </button>
+        </section>
+
+        <section class="server-info-frame">
+          <h1>서버 정보</h1>
+          <div class="server-info-container">
+            <div class="title">
+              <h3>Java Edition</h3>
+              <button id="copy-button-java" class="copy-button"><img class="copy-icon"
+                  src="img/copy-icon.png" /></button>
+            </div>
+            <div class="flexcontainer">
+              <p class="text">
+                <span class="span">주소: </span>
+                <span class="text-wrapper-6"> ejun.kro.kr<br /></span>
+              </p>
+              <p class="text">
+                <span class="span">포트: </span>
+                <span class="text-wrapper-6"> 25537</span>
+              </p>
+            </div>
+          </div>
+          <div class="server-info-container">
+            <div class="title">
+              <h3>Bedrock Edition</h3>
+              <button id="copy-button-bedrock" class="copy-button"><img class="copy-icon"
+                  src="img/copy-icon.png" /></button>
+            </div>
+            <div class="flexcontainer">
+              <p class="text">
+                <span class="span">주소: </span> <span class="text-wrapper-6"> ejun.kro.kr<br /></span>
+              </p>
+              <p class="text"><span class="span">포트: </span> <span class="text-wrapper-6">19033</span></p>
+            </div>
+          </div>
+          <div class="discord-logo-wrapper">
+            <a href="https://discord.gg/bd8kERArtZ"><img class="discord-logo" src="img/discord_logo.png" /></a>
+          </div>
+
+        </section>
+      </div>
+      <div class="center">
+        <section class="player-info-frame">
+          <div class="title-2">
+            <h1>접속 인원</h1>
+            <h2 class="players-number-text">2명</h2>
+          </div>
+          <div class="list">
+            <div class="index">
+              <h3 class="id">ID</h3>
+              <h3 class="name">Name</h3>
+              <h3 class="playtime">Playtime</h3>
+            </div>
+            <div class="item">
+              <div class="circle status-dot"></div>
+              <h3 class="id">slash0303</h3>
+              <h3 class="name">최한빈</h3>
+              <h3 class="playtime">1:01</h3>
+            </div>
+            <div class="item">
+              <div class="circle status-dot"></div>
+              <h3 class="id">sleepyrosdlamp</h3>
+              <h3 class="name">윤준</h3>
+              <h3 class="playtime">30:30</h3>
+            </div>
+          </div>
+      </div>
+      </section>
+
+      <div class="right">
+        <section class="whitelist-frame">
+          <h1>화이트리스트 신청</h1>
+          <div class="id-input-wrapper">
+            <input class="id-input" type="text" placeholder="아이디" />
+            <button class="id-input-button">요청하기</button>
+          </div>
+        </section>
+        <section class="hardware-info-frame">
+          <div class="div-3">
+            <h1>맥미니 현황</h1>
+            <div class="div-4">
+              <div class="group-3">
+                <div class="rectangle"></div>
+                <div class="text-wrapper-13">100%</div>
+              </div>
+              <div class="group-4">
+                <div class="rectangle-2"></div>
+                <div class="text-wrapper-13">RAM</div>
+              </div>
+              <div class="group-5">
+                <div class="rectangle-3"></div>
+                <div class="text-wrapper-13">CPU</div>
+              </div>
+            </div>
+          </div>
+          <div class="diagram-frame">
+            <div class="diagram">
+              <div class="overlap-group"><img class="ellipse-2" src="img/ellipse-4.svg" /></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+    const copyButtonJava = document.getElementById("copy-button-java");
+    const copyButtonBedrock = document.getElementById("copy-button-bedrock");
+    const startButton = document.getElementById("start-button");
+    const startButtonBackground = document.getElementById("start-button-background");
+    const startButtonStatusText = document.getElementById("status-text");
+    const startButtonTurnText = document.getElementById("turn-text");
+
+    startButton.addEventListener("click", () => {
+      startButtonBackground.classList.toggle("onBackground");
+      startButtonBackground.classList.toggle("offBackground");
+      startButtonStatusText.classList.toggle("onText");
+      startButtonStatusText.classList.toggle("offText");
+      if (startButtonStatusText.innerText == "온라인") {
+        startButtonStatusText.innerText = "오프라인";
+        startButtonTurnText.innerText = "켜기";
+      } else {
+        startButtonStatusText.innerText = "온라인";
+        startButtonTurnText.innerText = "끄기";
+      }
+
+    });
+
+    copyButtonJava.addEventListener("click", () => {
+      copy("ejun.kro.kr:25537");
+    })
+
+    copyButtonBedrock.addEventListener("click", () => {
+      copy("ejun.kro.kr:19033");
+    })
+
+    const copy = (text) => {
+      var myTemporaryInputElement = document.createElement("input");
+      myTemporaryInputElement.type = "text";
+      myTemporaryInputElement.value = text;
+
+      document.body.appendChild(myTemporaryInputElement);
+
+      myTemporaryInputElement.select();
+      document.execCommand("Copy");
+
+      document.body.removeChild(myTemporaryInputElement);
+    }
+  </script>
+</body>
+
+</html>
