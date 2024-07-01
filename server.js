@@ -148,6 +148,11 @@ app.get("/turnon", (req, res) => {
   command.stdin.end();
 });
 
+app.get("/log", (req, res) => {
+  console.log(req.query["text"].toString());
+  res.send("success");
+});
+
 server.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
